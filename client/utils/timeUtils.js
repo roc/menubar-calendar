@@ -215,8 +215,18 @@ export default {
     return `${hours}:${mins}`;
   },
 
+  getTimeZone() {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone.split('/').shift()
+  },
+
   prettyFormatDate(date, today = new Date()) {
     let prefix = this.getFullDayOfWeek(date.getDay());
+    let zone = this.getTimeZone();
+    let dateStr;
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = String(date.getFullYear()).substr(2);
+
     if (date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth()) {
       if (date.getDate() === today.getDate()) {
         prefix = 'Today';
@@ -225,6 +235,14 @@ export default {
       }
     }
 
-    return `${prefix} ${date.getMonth() + 1}/${date.getDate()}/${String(date.getFullYear()).substr(2)}`;
+    switch (zone) {
+      case 'Europe':
+        dateStr = `${prefix} ${day}/${month}/${year}`;
+      case 'America':
+      default:
+        dateStr = `${prefix} ${month}/${day}/${year}`;
+    }
+
+    return dateStr;
   }
 };
